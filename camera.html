@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Camera Controller</title>
+
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+
+</head>
+<body style='background-color: #EEEEEE;'>
+<span style='color: #003366;'>
+<h1>Camara Controller</h1>
+<div style='margin-left:0px'>
+    <ul style='list-style-type:none;display:inline-block; padding-inline-start:0px'>
+        <li style='border:1px solid rgb(146, 23, 228); float:left; margin-right: 10px; padding: 10px; padding-top: 0px; padding-bottom: 20px'>
+            <div> <!-- Pan module controlls -->
+                <h2>Pan Control</h2>
+                <p>RX:<span id='PAN_RX'>-</span></p>
+                <p>Delay:<span id='PAN_DLY'>-</span>, Max Delay:<span id='PAN_MAX_DLY'>-</span></p>
+                <div>
+                    Speed: <input type='range' min='-100' max='100' value='0' id='SPEED_SLIDER_PAN'>
+                    <button type='button' id='BTN_MOVE_PAN' onclick='move(this)'>Go</button>
+                </div>
+                <p></p>
+                <div>
+                </div>
+                <div>
+                    <button onclick='on_stop(this)' type='button' id='BTN_STOP_PAN'>Stop</button>
+                    <button type='button' onclick='button_go_home(this)' id='BTN_GO_HOME_PAN'>Go Home</button>
+                </div>
+            </div>
+        </li>
+
+
+
+
+
+
+
+
+        
+        <li style='border:1px solid rgb(146, 23, 228); float:left; margin-right: 10px; padding-left: 2px; padding: 10px; padding-top: 0px; padding-bottom: 20px'>
+            <div> <!-- TILT module controlls -->
+                <h2>Tilt Control</h2>
+                <p>RX:<span id='TILT_RX'>-</span></p>
+                <p>Delay:<span id='TILT_DLY'>-</span>, Max Delay:<span id='TILT_MAX_DLY'>-</span></p>
+                <div>
+                    Speed: <input type='range' min='-100' max='100' value='0' id='SPEED_SLIDER_TILT'>
+                    <button type='button' id='BTN_MOVE_TILT' onclick='move(this)' >Go</button>
+                </div>
+                <p></p>
+                <div>
+                </div>
+                <div>
+                    <button type='button' onclick='on_stop(this)' id='BTN_STOP_TILT'>Stop</button>
+                    <button type='button' onclick='button_go_home(this)' id='BTN_GO_HOME_TILT'>Go Home</button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div>
+    <button onclick='on_stop_all()' type='button' id='BTN_STOP_All'>Stop All</button>
+</div>
+</span>
+
+</body>
+
+<script>
+    const MsgIds = {
+        MSGID_KEEP_ALIVE:       2,
+        MSGID_LOGIN:            3,
+        MSGID_SET_HOME:         4,
+        MSGID_GO_HOME:          5,
+        MSGID_MOVE:             6,
+        MSGID_MOVE_TO_TARGET:   7,
+        MSGID_STEP:             8,
+        MSGID_STOP:             9 
+    }
+
+  var panSocket;
+  var tiltSocket;
+  var panMaxDelay = 0;
+  var tiltMaxDelay = 0;
+
+  function send_keepalive() {
+    return;
+    var msg = {
+      MsgID: MsgIds.MSGID_KEEP_ALIVE,
+      Time: new Date().getTime()
+      };
+
+      var str = JSON.stringify(msg);
+      panSocket.send(str);
+      tiltSocket.send(str);
+  }
+
+  function button_go_home(element) {
+        var msg = { MsgID: MsgIds.MSGID_GO_HOME};
+        if (element.id === 'BTN_GO_HOME_PAN') {
+            panSocket.send(JSON.stringify(msg));
+        }
+        else if (element.id === 'BTN_GO_HOME_TILT') {
+            tiltSocket.send(JSON.stringify(msg));
+        }
+  }
+
+  function move(element) {
+    var dir = 1; // Clockwise
+      if (element.id === 'BTN_MOVE_PAN') {
+        var speed = document.getElementById('SPEED_SLIDER_PAN').value;
+        if (speed < 0) {
+            dir = -1; // CounterClockwise;
+            speed = speed * -1;
+        }
+        var msg = {
+            MsgID: MsgIds.MSGID_MOVE,
+            speed: speed,
+            dir: dir
+          };
+        panSocket.send(JSON.stringify(msg));
+      }
+      else if (element.id === 'BTN_MOVE_TILT') {
+        var speed = document.getElementById('SPEED_SLIDER_TILT').value;
+        if (speed < 0) {
+            dir = -1; // CounterClockwise
+            speed = speed * -1;
+        }
+        var msg = {
+            MsgID: MsgIds.MSGID_MOVE,
+            speed: speed,
+            dir: dir
+          };
+        tiltSocket.send(JSON.stringify(msg));
+      }
+  }
+
+  function on_stop(element) {
+    var msg = { MsgID: MsgIds.MSGID_STOP };
+        if (element.id === 'BTN_STOP_PAN') {
+            panSocket.send(JSON.stringify(msg));
+            document.getElementById('SPEED_SLIDER_PAN').value = '0';
+        }
+        else if (element.id === 'BTN_STOP_TILT') {
+            tiltSocket.send(JSON.stringify(msg));
+            document.getElementById('SPEED_SLIDER_TILT').value = '0';
+        }
+  }
+
+  function on_stop_all() {
+    var msg = { MsgID: MsgIds.MSGID_STOP };
+    var str = JSON.stringify(msg);
+    panSocket.send(str);
+    tiltSocket.send(str);
+
+    document.getElementById('SPEED_SLIDER_PAN').value = '0';
+    document.getElementById('SPEED_SLIDER_TILT').value = '0';
+  }
+
+  function processPanCommand(event) {
+	var delay = new Date().getTime();
+    var obj = JSON.parse(event.data);
+    delay = delay - obj.Time;
+    if (panMaxDelay < delay) {
+        panMaxDelay = delay;
+        document.getElementById('PAN_MAX_DLY').innerHTML = panMaxDelay;
+    }
+    document.getElementById('PAN_RX').innerHTML = obj.Time;
+    document.getElementById('PAN_DLY').innerHTML = delay;
+  }
+  
+  function processTiltCommand(event) {
+    var delay = new Date().getTime();
+	var obj = JSON.parse(event.data);
+    delay = delay - obj.Time;
+    if (tiltMaxDelay < delay) {
+        tiltMaxDelay = delay;
+        document.getElementById('TILT_MAX_DLY').innerHTML = tiltMaxDelay;
+    }
+    document.getElementById('TILT_RX').innerHTML = obj.Time;
+    document.getElementById('TILT_DLY').innerHTML = delay;
+  }
+
+  function init() {
+    panSocket = new WebSocket('ws://192.168.4.122:81/');
+    tiltSocket = new WebSocket('ws://192.168.4.125:81/');
+    panSocket.onmessage = function(event) {
+      processPanCommand(event);
+    };
+    tiltSocket.onmessage = function(event) {
+        processTiltCommand(event);
+    };
+
+    var timer = setInterval(function(){send_keepalive();}, 1000);
+  }
+
+  window.onload = function(event) {
+    init();
+  }
+</script>
+</html>
