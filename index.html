@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Camera Controller</title>
+  </head>
+  <body>
+
+
+        <div class="container-fluid bg-dark bg-gradient  justify-content-md-center">
+            
+            <div class="row">
+                <h1 class="align-items-center text-center text-white bg-dark bg-gradient">Camera Controller</h1>
+
+              <div class="col-md-3">
+              
+              </div>
+              <!-- Card-Pan-Control -->
+              <div class="col-md-3">
+                <div class="card shadow p-3 mb-5 bg-body rounded" style="width: 18rem;">
+                    <img src="camera1.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">Pan Control</h5>
+                      <p>RX:<span id='PAN_RX'>-</span></p>
+                        <p>Delay:<span id='PAN_DLY'>-</span>, Max Delay:<span id='PAN_MAX_DLY'>-</span></p>
+                        <div><i class="fa-solid fa-person-running fa-beat"></i> Speed:</div>
+                      <!-- Container for slider control 1 -->
+
+                            <div class="range">
+                                
+                               <div class="range__content">
+                                  <div class="range__slider">
+                                     <div class="range__slider-line" id="range-line"></div>
+                                  </div>
+                                  
+                                  <div class="range__thumb" id="range-thumb">
+                                     <div class="range__value">
+                                        <span class="range__value-number" id="range-number">50</span>
+                                     </div>
+                                  </div>
+                                  <input type="range" class="range__input" id="SPEED_SLIDER_PAN" min="0" max="100" value="50" step="1">
+            
+                                        
+                               </div>
+                               
+                            </div>
+                            <div class="d-flex flex-row-reverse mt-1 mb-3"><span class="badge rounded-pill bg-dark text-danger" 
+                                id='BTN_MOVE_PAN' onclick='move(this)'>Go</span></div>
+                            
+                    <!-- end of slider controller 1 -->
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                        onclick='on_stop(this)' id='BTN_GO_HOME_PAN'>Stop</button>
+                        <button type="button" class="btn btn-outline-success btn-sm"
+                        onclick='button_go_home(this)' id='BTN_GO_HOME_PAN'>Go Home</button>
+                      </div>
+            
+                    </div>
+                  </div>
+              </div>
+              <!-- Card-Tilt-Control -->
+              <div class="col-md-3 justify-content-md-center">
+                <div class="card shadow-none p-3 mb-5 bg-light rounded" style="width: 18rem;">
+                    <img src="camera2.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">Tilt Control</h5>
+                      <p>RX:<span id='TILT_RX'>-</span></p>
+                        <p>Delay:<span id='TILT_DLY'>-</span>, Max Delay:<span id='TILT_MAX_DLY'>-</span></p>
+                        <div><i class="fa-solid fa-person-running fa-beat"></i> Speed:</div>
+
+                      <!-- Container for slider control 1 -->
+                            <div class="range">
+                               <div class="range__content">
+                                  <div class="range__slider">
+                                     <div class="range__slider-line" id="range-line2"></div>
+                                  </div>
+                                  
+                                  <div class="range__thumb" id="range-thumb2">
+                                     <div class="range__value">
+                                        <span class="range__value-number" id="range-number2">50</span>
+                                     </div>
+                                  </div>
+                                  <input type="range" class="range__input" id="SPEED_SLIDER_TILT" min="0" max="100" value="50" step="1">
+            
+                                        
+                               </div>
+                               
+                            </div>
+                            <div class="d-flex flex-row-reverse mt-1 mb-3"><span class="badge rounded-pill bg-dark text-danger" 
+                                id='BTN_MOVE_TILT' onclick='move(this)'>Go</span></div>
+                            
+                    <!-- end of slider controller 1 -->
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                        onclick='on_stop(this)' id='BTN_GO_HOME_TILT'>Stop</button>
+                        <button type="button" class="btn btn-outline-success btn-sm"
+                        onclick='button_go_home(this)' id='BTN_GO_HOME_TILT'>Go Home</button>
+                      </div>
+            
+                    </div>
+                  </div>
+              </div>
+              <div class="col-md-3">
+                
+              </div>
+            </div>
+            
+          </div>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="slider.js"></script>
+    <script src="main.js"></script>
+    <script src="https://kit.fontawesome.com/53d50b2ab8.js" crossorigin="anonymous"></script>
+  </body>
+</html>
